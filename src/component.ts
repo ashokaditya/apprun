@@ -13,6 +13,7 @@ export class Component<T=any> {
   private enable_history;
   private global_event;
   public rendered;
+  public mounted;
 
   private renderState(state: T) {
     if (!this.view) return;
@@ -136,7 +137,7 @@ export class Component<T=any> {
     Reflect.getMetadataKeys(this).forEach(key => {
       if (key.startsWith('apprun-update:')) {
         const meta = Reflect.getMetadata(key, this)
-        actions[meta.name] = meta.action || this[meta.key]
+        actions[meta.name] = [this[meta.key].bind(this), meta.options];
       }
     })
     const all = {};
@@ -156,8 +157,6 @@ export class Component<T=any> {
       }
     });
   }
-
-  render = () => this.view(this.state);
 
   public run(name: string, ...args) {
     return this.global_event || this.is_global_event(name) ?
