@@ -44,4 +44,13 @@ export class App {
   }
 }
 
-export default new App();
+let app: App;
+declare var global;
+const root = global || window;
+if (root['app'] && root['app']['start']) {
+  app = root['app'];
+} else {
+  app = new App();
+  root['app'] = app;
+}
+export default app;
